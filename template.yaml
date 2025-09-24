@@ -15,46 +15,63 @@ Globals:
 
 Resources:
 
-  # Original Bucket
-  OriginalImagesBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: original-bucket
-
   # Bucket for processed images
   ProcessedImagesBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: processed-bucket
 
-  # Lambda Function
+  # Lambda Function with inline policies
   ImageProcessorFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
       CodeUri: image_processor/
       Handler: app.lambda_handler
       Runtime: python3.11
       Architectures:
-      - x86_64
-
-      # Permissions to read and write from S3 buckets
+        - x86_64
       Policies:
-        - S3ReadPolicy:
-            BucketName: !Ref OriginalImagesBucket
-        - S3WritePolicy:
-            BucketName: !Ref ProcessedImagesBucket
+        - Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Action:
+                - s3:GetObject
+              Resource: 'arn:aws:s3:::original-bucket/*'
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+              Resource: !Sub '${ProcessedImagesBucket}/*'
 
-      Events:
-        S3Trigger:
-          Type: S3
-          Properties:
-            Bucket: !Ref  OriginalImagesBucket
-            Events: s3:ObjectCreated:*
+  # Original images bucket with notification
+  OriginalImagesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: original-bucket
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt ImageProcessorFunction.Arn
+    DependsOn: S3InvokeLambdaPermission
+
+  # Permission for S3 to invoke Lambda
+  S3InvokeLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ImageProcessorFunction
+      Principal: s3.amazonaws.com
+      SourceArn: 'arn:aws:s3:::original-bucket'
+      SourceAccount: !Ref 'AWS::AccountId'
 
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   OriginalBucketName:
     Description: S3 bucket for uploads
     Value: !Ref OriginalImagesBucket
+
+  ProcessedBucketName:
+    Description: S3 bucket for processed images
+    Value: !Ref ProcessedImagesBucket
+
+  LambdaFunctionName:
+    Description: Lambda function name
+    Value: !Ref ImageProcessorFunction
