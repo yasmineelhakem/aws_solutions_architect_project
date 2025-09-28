@@ -1,0 +1,14 @@
+{
+  "Records": [
+    {
+      "s3": {
+        "bucket": {
+          "name": "original-bucket"
+        },
+        "object": {
+          "key": "openstack.png"
+        }
+      }
+    }
+  ]
+}

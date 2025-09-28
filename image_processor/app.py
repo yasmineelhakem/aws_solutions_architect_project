@@ -2,8 +2,18 @@ import json
 import boto3
 from PIL import Image
 import io
+import os 
 
-s3 = boto3.client('s3')
+endpoint_url = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
+
+s3 = boto3.client(
+    "s3",
+    endpoint_url=endpoint_url,
+    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID", "test"),
+    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY", "test"),
+    region_name=os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+)
+
 
 def lambda_handler(event, context):
 
@@ -28,7 +38,18 @@ def lambda_handler(event, context):
     image.save(output_buffer, format=image.format) # Save resized image to bytes
     output_buffer.seek(0) # Reset buffer position
 
+    # Upload the processed image to a different S3 bucket
+    processed_bucket = "processed-bucket"  
+    new_key = f"processed/{key}"
     
+    s3.put_object(
+        Bucket=processed_bucket,
+        Key=new_key,
+        Body=output_buffer,
+        ContentType=f'image/{image.format.lower()}'
+    )
+
+
     return {
         'statusCode': 200,
         'body': json.dumps({
@@ -39,7 +60,9 @@ def lambda_handler(event, context):
             'image_format': image.format,
             'dimensions': f"{image.width}x{image.height}",
             'processed_size': len(output_buffer.getvalue()),
-            'new_dimensions': f"{image.width}x{image.height}"
+            'new_dimensions': f"{image.width}x{image.height}",
+            'processed_bucket': processed_bucket,
+            'processed_key': new_key
 
         }),
     }

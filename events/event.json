@@ -3,8 +3,8 @@
     {
       "eventSource": "aws:s3",
       "s3": {
-        "bucket": {"name": "test-bucket"},
-        "object": {"key": "test-image.jpg"}
+        "bucket": {"name": "OriginalImagesBucket"},
+        "object": {"key": "cat.jpg"}
       }
     }
   ]
