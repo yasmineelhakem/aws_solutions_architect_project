@@ -1,0 +1,1 @@
+{"statusCode": 200, "body": "{\"message\": \"S3 event received and image downloaded \", \"bucket\": \"original-bucket\", \"key\": \"openstack.png\", \"size\": 12437, \"image_format\": \"PNG\", \"dimensions\": \"512x512\", \"processed_size\": 12496, \"new_dimensions\": \"512x512\", \"processed_bucket\": \"processed-bucket\", \"processed_key\": \"processed/openstack.png\"}"}

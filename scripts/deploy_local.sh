@@ -15,9 +15,13 @@ export SAM_CLI_TELEMETRY=0
 aws --endpoint-url=http://localhost:4566 s3 mb s3://original-bucket || true 
 aws --endpoint-url=http://localhost:4566 s3 mb s3://processed-bucket || true
 
+# upload a test image to the original bucket
+aws s3 cp openstack.png s3://original-bucket/ --endpoint-url http://localhost:4566
+
 # list S3 buckets
 aws --endpoint-url=http://localhost:4566 s3 ls
 
+# build 
 samlocal.bat build
 
 # deploy using samlocal

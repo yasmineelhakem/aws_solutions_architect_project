@@ -25,6 +25,9 @@ Resources:
       CodeUri: image_processor/
       Handler: app.lambda_handler
       Runtime: python3.11
+      Environment:
+        Variables:
+          AWS_ENDPOINT_URL: "http://host.docker.internal:4566"
       Architectures:
         - x86_64
       Policies:
