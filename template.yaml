@@ -5,16 +5,13 @@ Description: >
 
   Sample SAM Template for image-processor
 
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
     Timeout: 60
-    # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
 
 Resources:
-
   # Bucket for processed images
   ProcessedImagesBucket:
     Type: AWS::S3::Bucket
@@ -40,7 +37,7 @@ Resources:
             - Effect: Allow
               Action:
                 - s3:PutObject
-              Resource: !Sub '${ProcessedImagesBucket}/*'
+              Resource: "arn:aws:s3:::processed-bucket/*"  
 
   # Original images bucket with notification
   OriginalImagesBucket:
@@ -60,7 +57,7 @@ Resources:
       Action: lambda:InvokeFunction
       FunctionName: !Ref ImageProcessorFunction
       Principal: s3.amazonaws.com
-      SourceArn: 'arn:aws:s3:::original-bucket'
+      SourceArn: "arn:aws:s3:::original-bucket"  # correct bucket, no /* (the error in deployment)
       SourceAccount: !Ref 'AWS::AccountId'
 
 Outputs:

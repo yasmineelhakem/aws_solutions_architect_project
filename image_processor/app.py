@@ -4,18 +4,23 @@ from PIL import Image
 import io
 import os 
 
-endpoint_url = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
+endpoint = os.environ.get("S3_ENDPOINT_URL", None)
 
 s3 = boto3.client(
     "s3",
-    endpoint_url=endpoint_url,
-    aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID", "test"),
-    aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY", "test"),
-    region_name=os.getenv("AWS_DEFAULT_REGION", "us-east-1")
+    endpoint_url=endpoint,
+    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+    region_name=os.environ.get("AWS_DEFAULT_REGION")
 )
 
 
 def lambda_handler(event, context):
+    print("Environment variables hihi:")
+    print(f"AWS_ACCESS_KEY_ID: {os.environ.get('AWS_ACCESS_KEY_ID', 'NOT SET')}")
+    print(f"AWS_SECRET_ACCESS_KEY: {os.environ.get('AWS_SECRET_ACCESS_KEY', 'NOT SET')}")
+    print(f"AWS_DEFAULT_REGION: {os.environ.get('AWS_DEFAULT_REGION', 'NOT SET')}")
+    print(f"S3_ENDPOINT_URL: {os.environ.get('S3_ENDPOINT_URL', 'NOT SET')}")
 
     record = event['Records'][0] # Get the 1st record
     bucket = record['s3']['bucket']['name'] # Get bucket name
