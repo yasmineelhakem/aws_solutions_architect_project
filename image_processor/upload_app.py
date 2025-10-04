@@ -19,6 +19,8 @@ def lambda_handler(event, context):
         ExpiresIn=300
     )
 
+    presigned_url = presigned_url.replace("host.docker.internal", "localhost")
+
     return {
         # this is sent to the api gateway => client
         "statusCode": 200,

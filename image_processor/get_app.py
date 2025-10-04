@@ -12,6 +12,8 @@ def lambda_handler(event, context):
         ExpiresIn=300
     )
 
+    url = url.replace("host.docker.internal", "localhost")
+    
     return {
         # Returns the JSON response to API Gateway which sends it to the client
         "statusCode": 200,

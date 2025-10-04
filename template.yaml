@@ -133,3 +133,7 @@ Outputs:
   LambdaFunctionName:
     Description: Lambda function name
     Value: !Ref ImageProcessorFunction
+
+  ApiGatewayUrl:
+    Description: API Gateway endpoint URL (LocalStack)
+    Value: !Sub "http://localhost:4566/restapis/${ImageApi}/test/_user_request_/"
