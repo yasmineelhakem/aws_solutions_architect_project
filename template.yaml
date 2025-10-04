@@ -63,6 +63,64 @@ Resources:
       SourceArn: "arn:aws:s3:::original-bucket"  # correct bucket, no /* (the error in deployment)
       SourceAccount: !Ref 'AWS::AccountId'
 
+   # API Gateway to route the multiple lambda functions 
+  ImageApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: test
+      Auth:
+        DefaultAuthorizer: NONE  # No authentication required
+        ApiKeyRequired: false
+      Cors:
+        AllowMethods: "'GET,POST,PUT,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+        
+  # Lambda to generate pre-signed URL
+  UploadFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: image_processor/
+      Handler: upload_app.lambda_handler
+      Runtime: python3.11
+      Environment:
+        Variables:
+          AWS_ENDPOINT_URL: "http://host.docker.internal:4566" # localstack endpoint
+          UPLOAD_BUCKET: !Ref OriginalImagesBucket
+      Policies:
+        - S3WritePolicy:
+            BucketName: !Ref OriginalImagesBucket
+      Events:
+        ApiUpload:
+          Type: Api
+          Properties:
+            Path: /upload  # user calls this endpoint to get the pre-signed url
+            Method: post
+            RestApiId: !Ref ImageApi
+
+  # Lambda ft to get processed images 
+  GetImageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: image_processor/
+      Handler: get_app.lambda_handler
+      Runtime: python3.11
+      Environment:
+        Variables:
+          AWS_ENDPOINT_URL: "http://host.docker.internal:4566"
+          PROCESSED_BUCKET: !Ref ProcessedImagesBucket
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref ProcessedImagesBucket
+      Events:
+        ApiGetImage:
+          Type: Api
+          Properties:
+            Path: /images/{key+}
+            Method: get # user calls this endpoint to retrieve any processed image
+            RestApiId: !Ref ImageApi
+
+
 Outputs:
   OriginalBucketName:
     Description: S3 bucket for uploads
