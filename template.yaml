@@ -18,6 +18,19 @@ Resources:
     Properties:
       BucketName: processed-bucket
 
+  # DynamoDB Table for image metadata
+  ImageMetadataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: image-metadata
+      AttributeDefinitions:
+        - AttributeName: imageId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: imageId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+
   # Lambda Function with inline policies
   ImageProcessorFunction:
     Type: AWS::Serverless::Function
@@ -28,6 +41,7 @@ Resources:
       Environment:
         Variables:
           AWS_ENDPOINT_URL: "http://host.docker.internal:4566"
+          METADATA_TABLE: !Ref ImageMetadataTable
       Architectures:
         - x86_64
       Policies:
@@ -40,7 +54,13 @@ Resources:
             - Effect: Allow
               Action:
                 - s3:PutObject
-              Resource: "arn:aws:s3:::processed-bucket/*"  
+              Resource: "arn:aws:s3:::processed-bucket/*" 
+
+            - Effect: Allow
+              Action:
+                - dynamodb:UpdateItem
+                - dynamodb:GetItem
+              Resource: !GetAtt ImageMetadataTable.Arn 
 
   # Original images bucket with notification
   OriginalImagesBucket:
@@ -90,6 +110,8 @@ Resources:
       Policies:
         - S3WritePolicy:
             BucketName: !Ref OriginalImagesBucket
+        - DynamoDBWritePolicy:
+            TableName: !Ref ImageMetadataTable
       Events:
         ApiUpload:
           Type: Api

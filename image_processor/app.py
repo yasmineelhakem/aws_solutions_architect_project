@@ -41,7 +41,20 @@ def lambda_handler(event, context):
         ContentType=f'image/{image.format.lower()}'
     )
 
+    dynamodb = boto3.resource("dynamodb", endpoint_url=os.environ.get("AWS_ENDPOINT_URL"))
+    table = dynamodb.Table(os.environ.get("METADATA_TABLE", "image-metadata"))
 
+     # Update DynamoDB status
+    try:
+        table.update_item(
+            Key={'imageId': key},
+            UpdateExpression="SET #s = :status",
+            ExpressionAttributeNames={'#s': 'status'},
+            ExpressionAttributeValues={':status': 'PROCESSED'}
+        )
+    except Exception as e:
+        print("DynamoDB update failed:", str(e))
+        
     return {
         'statusCode': 200,
         'body': json.dumps({
