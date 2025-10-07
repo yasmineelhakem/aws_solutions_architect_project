@@ -1,4 +1,11 @@
 # <img src="https://upload.wikimedia.org/wikipedia/commons/9/93/Amazon_Web_Services_Logo.svg" width="30">  Project Preview
+![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?style=flat-square&logo=awslambda&logoColor=white)
+![Amazon S3](https://img.shields.io/badge/Amazon-S3-569A31?style=flat-square&logo=amazons3&logoColor=white)
+![API Gateway](https://img.shields.io/badge/AWS-API_Gateway-FF4F8B?style=flat-square&logo=amazonapigateway&logoColor=white)
+![DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)
+![LocalStack](https://img.shields.io/badge/LocalStack-Testing-4D84F5?style=flat-square)
+
 This project simulates a serverless image processing pipeline using AWS cloud services, deployed entirely in a local environment with LocalStack.
 
 The goal is to reproduce how a real-world AWS-based image processing system works from uploading an image, to processing it automatically through Lambda, and storing metadata in DynamoDB.
@@ -28,7 +35,6 @@ The system consists of three main functionalities:
   - [3. Invoking the Lambda Function Manually](#3-invoking-the-lambda-function-manually)
   - [4. Testing the API Gateway](#4-testing-the-api-gateway)
   - [5. Verifying DynamoDB Storage](#5-verifying-dynamodb-storage)
-- [Project Structure](#project-structure)
 - [Conclusion](#conclusion)
 
 # Architecture Overview
@@ -213,9 +219,3 @@ It simulates a cloud setup with event-driven Lambda functions, S3 storage, API G
 This setup provides a foundation for experimenting with and extending real-world AWS architectures locally, which can be later deployed seamlessly to the actual AWS cloud.
 
 
-![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?style=flat-square&logo=awslambda&logoColor=white)
-![Amazon S3](https://img.shields.io/badge/Amazon-S3-569A31?style=flat-square&logo=amazons3&logoColor=white)
-![API Gateway](https://img.shields.io/badge/AWS-API_Gateway-FF4F8B?style=flat-square&logo=amazonapigateway&logoColor=white)
-![DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)
-![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)
-![LocalStack](https://img.shields.io/badge/LocalStack-Testing-4D84F5?style=flat-square)
