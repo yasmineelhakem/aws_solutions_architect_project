@@ -115,9 +115,9 @@ Before running this project, ensure you have the following installed and configu
 |------|---------|
 | `template.yaml` | Infrastructure as Code - defines all AWS resources (S3, Lambda, DynamoDB, API Gateway) |
 | `image_processor/app.py` | Image Processor Lambda - resizes images and updates DynamoDB status |
-| `images_processor/upload_app.py` | Generates pre-signed URLs for secure S3 uploads without exposing credentials |
-| `images_processor/get_app.py` | Generates pre-signed URLs for secure S3 downloads |
-| `images_processor/requirements.txt` | Python dependencies (Pillow for image processing, boto3 for AWS SDK) |
+| `image_processor/upload_app.py` | Generates pre-signed URLs for secure S3 uploads without exposing credentials |
+| `image_processor/get_app.py` | Generates pre-signed URLs for secure S3 downloads |
+| `image_processor/requirements.txt` | Python dependencies (Pillow for image processing, boto3 for AWS SDK) |
 | `scripts/deploy_local.sh` | Automates the LocalStack deployment process |
 | `events/event2.json` | Sample S3 event payload for manual Lambda testing |
 
