@@ -11,6 +11,26 @@ The system consists of three main functionalities:
 
 * Providing a pre-signed download link for clients to retrieve the processed image from another S3 bucket.
 
+## Table of Contents
+- [Architecture Overview](#architecture-overview)
+  - [Architecture Diagram](#architecture-diagram)
+- [Services Used](#services-used)
+  - [Amazon S3](#amazon-s3)
+  - [AWS Lambda](#aws-lambda)
+  - [Amazon DynamoDB](#amazon-dynamodb)
+  - [Amazon API Gateway](#amazon-api-gateway)
+  - [AWS CloudFormation / AWS SAM](#aws-cloudformation--aws-sam)
+- [Prerequisites](#prerequisites)
+- [Project Strcuture](#project-structure)
+- [Local Deployment and Testing Workflow](#local-deployment-and-testing-workflow)
+  - [1. Deploying the Infrastructure Locally](#1-deploying-the-infrastructure-locally)
+  - [2. Verifying Lambda Deployment and Configuration](#2-verifying-lambda-deployment-and-configuration)
+  - [3. Invoking the Lambda Function Manually](#3-invoking-the-lambda-function-manually)
+  - [4. Testing the API Gateway](#4-testing-the-api-gateway)
+  - [5. Verifying DynamoDB Storage](#5-verifying-dynamodb-storage)
+- [Project Structure](#project-structure)
+- [Conclusion](#conclusion)
+
 # Architecture Overview
 The architecture is designed following a typical event-driven serverless pattern:
 
@@ -73,7 +93,29 @@ This template describes:
 * The permissions and event triggers
 
 All resources are deployed and configured automatically through this template.
+# Prerequisites
+Before running this project, ensure you have the following installed and configured:
 
+| Tool | Version | Purpose |
+|------|---------|---------|
+| **Docker** | v20.10+ | Running LocalStack containers |
+| **AWS SAM CLI** | v1.100+ | Building and deploying serverless applications |
+| **Python** | 3.11 | Lambda runtime environment |
+| **AWS CLI** | v2.x | Interacting with LocalStack services |
+| **LocalStack** | Latest | Local AWS cloud emulation |
+
+# Project Structure
+| File | Purpose |
+|------|---------|
+| `template.yaml` | Infrastructure as Code - defines all AWS resources (S3, Lambda, DynamoDB, API Gateway) |
+| `image_processor/app.py` | Image Processor Lambda - resizes images and updates DynamoDB status |
+| `images_processor/upload_app.py` | Generates pre-signed URLs for secure S3 uploads without exposing credentials |
+| `images_processor/get_app.py` | Generates pre-signed URLs for secure S3 downloads |
+| `images_processor/requirements.txt` | Python dependencies (Pillow for image processing, boto3 for AWS SDK) |
+| `scripts/deploy_local.sh` | Automates the LocalStack deployment process |
+| `events/event2.json` | Sample S3 event payload for manual Lambda testing |
+
+---
 # Local Deployment and Testing Workflow
 Since this project uses LocalStack, all AWS services run locally in Docker containers, allowing complete testing without an AWS account.
 
@@ -171,3 +213,9 @@ It simulates a cloud setup with event-driven Lambda functions, S3 storage, API G
 This setup provides a foundation for experimenting with and extending real-world AWS architectures locally, which can be later deployed seamlessly to the actual AWS cloud.
 
 
+![AWS Lambda](https://img.shields.io/badge/AWS-Lambda-FF9900?style=flat-square&logo=awslambda&logoColor=white)
+![Amazon S3](https://img.shields.io/badge/Amazon-S3-569A31?style=flat-square&logo=amazons3&logoColor=white)
+![API Gateway](https://img.shields.io/badge/AWS-API_Gateway-FF4F8B?style=flat-square&logo=amazonapigateway&logoColor=white)
+![DynamoDB](https://img.shields.io/badge/Amazon-DynamoDB-4053D6?style=flat-square&logo=amazondynamodb&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=flat-square&logo=python&logoColor=white)
+![LocalStack](https://img.shields.io/badge/LocalStack-Testing-4D84F5?style=flat-square)
